@@ -29,4 +29,7 @@ Follow these steps to set up the project locally:
     Execute the setup script to initialize the environment:
    ```bash
    ./setup.sh
-
+1. **Run the Server**
+    Start the server:
+   ```bash
+   python manage.py runserver
