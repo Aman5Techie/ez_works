@@ -10,6 +10,7 @@ from django.http import HttpResponse
 import requests
 from knox.auth import TokenAuthentication
 import base64
+from django.db.models import F
 import hashlib
 
 class FileUploadViewSet(viewsets.ViewSet):
@@ -161,3 +162,27 @@ class FileDecryptViewSet(views.APIView):
             return Response({
                 'message': 'Failed to download the file.'
             }, status=404)
+
+class GetAllFileIdsAndName(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    
+    def get(self, request):
+        """VALIDATING ENCRYPTED URL"""
+        
+        try:
+            
+           files = UploadedFile.objects.annotate(
+                file_id=F('unique_id'), 
+                file_name=F('original_file_name')
+            ).values('file_id', 'file_name')
+           
+           file_list = list(files)  
+           
+           if not file_list:
+               return Response({"message": "No files found."}, status=204) 
+           
+           return Response(file_list, status=200)
+        
+        except Exception as e:
+            return Response({"detail": str(e)}, status=500)  

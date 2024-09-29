@@ -3,6 +3,7 @@ from django.urls import path, include
 from .views import FileUploadViewSet
 from .views import FileDownloadViewSet
 from .views import FileDecryptViewSet
+from .views import GetAllFileIdsAndName
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -13,4 +14,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('download/', FileDownloadViewSet.as_view(),name="download"),
     path('download_file/<str:url>/', FileDecryptViewSet.as_view(),name="download_file"),
+    path('get_files/', GetAllFileIdsAndName.as_view(),name="get_files"),
 ]
