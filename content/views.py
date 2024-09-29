@@ -98,7 +98,7 @@ class FileDownloadViewSet(views.APIView):
         
         
         return Response({
-            'encrypted_file_url': f"http://127.0.0.1:8000/api/download_file/?url={encrypted_url}",
+            'encrypted_file_url': f"http://127.0.0.1:8000/api/download_file/{encrypted_url}",
             'message': 'File URL encrypted successfully.'
         }, status=200)
         

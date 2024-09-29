@@ -20,4 +20,10 @@ else
   exit 1
 fi
 
-echo "Setup complete. Virtual environment is ready!"
+echo "Making migrations..."
+python manage.py makemigrations
+
+echo "Applying migrations..."
+python manage.py migrate
+
+echo "Setup complete. Virtual environment is ready, and migrations have been applied!"

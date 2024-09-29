@@ -30,7 +30,7 @@ class UserSignupView(generics.CreateAPIView):
         """OPERATION USERS ARE VERIFIED"""
         if request.data.get("user_type") == 'operation':
             verified_status = True
-        
+            
         """COPY THE REQUEST DATA"""
         user_data = request.data.copy() 
         
@@ -39,6 +39,10 @@ class UserSignupView(generics.CreateAPIView):
                 
         serializer = self.get_serializer(data=user_data)
         
+        data = {
+            "message" : "Email verified Login to get Token."
+        }
+        
         if serializer.is_valid():
             email = serializer.validated_data.get("email")
             user_type = serializer.validated_data.get("user_type")
@@ -46,7 +50,9 @@ class UserSignupView(generics.CreateAPIView):
                 if user_type == "client":
                     
                     """SEND EMAIL TO CLIENT"""
-                    self.send_verification_email(email=email)
+                    verification_url = self.send_verification_email(email=email)
+                    data["verification_url"] = verification_url
+                    data["message"] = "Check your mail id for verification."
                     
             except Exception as e:
 
@@ -56,12 +62,10 @@ class UserSignupView(generics.CreateAPIView):
             
             """SAVE THE USER"""
             user = serializer.save()
+            data["user_id"] = user.id
+            data["email"] = user.email
             
-            return Response({
-                'message': 'User created successfully',
-                'user_id': user.id,
-                'email': user.email
-            }, status=status.HTTP_201_CREATED)
+            return Response(data, status=status.HTTP_201_CREATED)
             
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -83,6 +87,7 @@ class UserSignupView(generics.CreateAPIView):
             fail_silently=False,
         )
 
+        return verification_url
 
 class UserLogininView(KnoxLoginView):
     permission_classes = (permissions.AllowAny,)
